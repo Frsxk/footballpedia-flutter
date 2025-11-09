@@ -1,102 +1,65 @@
-# Tugas 7 PBP: Elemen Dasar Flutter
+# Tugas 8 PBP: Flutter Navigation, Layouts, Forms, and Input Elements
 
 Hello Flutter
 
 # Checklist Tugas
-### Membuat sebuah program Flutter baru dengan tema Football shop yang sesuai dengan tugas-tugas sebelumnya.
+### Membuat minimal satu halaman baru pada aplikasi, yaitu halaman formulir tambah produk baru dengan ketentuan sebagai berikut:
 
-### Membuat tiga tombol sederhana dengan ikon dan teks untuk product kamu:
-- All Products
-- My Products
-- Create Product
+#### Memakai minimal tiga elemen input, yaitu name, price, dan description.
 
-### Mengimplementasikan warna-warna yang berbeda untuk setiap tombol:
-- Warna biru untuk tombol All Products
-- Warna hijau untuk tombol My Products
-- Warna merah untuk tombol Create Product
+#### Tambahkan elemen input lain sesuai dengan model pada aplikasi Football Shop Django yang telah kamu buat (misalnya thumbnail, category, dan isFeatured).
 
-### Memunculkan Snackbar dengan tulisan:
-- "Kamu telah menekan tombol All Products" ketika tombol All Products ditekan.
-- "Kamu telah menekan tombol My Products" ketika tombol My Products ditekan.
-- "Kamu telah menekan tombol Create Product" ketika tombol Create Product ditekan.
+#### Memiliki sebuah tombol Save.
 
-### Jawab pertanyaan-pertanyaan berikut di file README.md pada folder root:
+#### Setiap elemen input di formulir juga harus divalidasi dengan ketentuan sebagai berikut:
+- Setiap elemen input tidak boleh kosong.
+- Setiap elemen input harus berisi data dengan tipe data atribut modelnya.
 
-#### Jelaskan apa itu widget tree pada Flutter dan bagaimana hubungan parent-child (induk-anak) bekerja antar widget.
+### Mengarahkan pengguna ke halaman form tambah produk baru ketika menekan tombol Tambah Produk pada halaman utama.
 
-Widget tree adalah struktur hierarki dari widget-widget yang membentuk UI aplikasi Flutter. Setiap widget dapat memiliki widget lain sebagai child (anak), membentuk struktur seperti pohon. Hubungan parent-child bekerja dengan cara:
-- Parent widget mengontrol posisi dan ukuran child widget
-- Child widget mewarisi beberapa properti dari parent (seperti theme, context)
-- Perubahan pada parent dapat mempengaruhi semua child di bawahnya
-- Data mengalir dari parent ke child melalui constructor parameters
+### Memunculkan data sesuai isi dari formulir yang diisi dalam sebuah pop-up setelah menekan tombol Save pada halaman form tambah produk baru.
 
-#### Sebutkan semua widget yang kamu gunakan dalam proyek ini dan jelaskan fungsinya.
+### Membuat sebuah drawer pada aplikasi dengan ketentuan sebagai berikut:
 
-1. **MaterialApp**: Widget root yang menyediakan struktur Material Design
-2. **Scaffold**: Menyediakan struktur dasar halaman (AppBar, Body, dll)
-3. **AppBar**: Bar di bagian atas aplikasi untuk menampilkan judul
-4. **Padding**: Memberikan jarak/padding di sekitar widget child
-5. **Column**: Menyusun widget secara vertikal
-6. **Text**: Menampilkan teks
-7. **GridView.count**: Menampilkan widget dalam bentuk grid dengan jumlah kolom tetap
-8. **Material**: Memberikan efek visual Material Design
-9. **InkWell**: Memberikan efek ripple saat widget ditekan
-10. **Container**: Widget untuk styling dan positioning
-11. **Icon**: Menampilkan ikon
-12. **SnackBar**: Menampilkan pesan sementara di bagian bawah layar
-13. **Center**: Menempatkan child widget di tengah
-14. **SizedBox**: Memberikan jarak/spacing dengan ukuran tetap
+- Drawer minimal memiliki dua buah opsi, yaitu Halaman Utama dan Tambah Produk.
 
-#### Apa fungsi dari widget MaterialApp? Jelaskan mengapa widget ini sering digunakan sebagai widget root.
+- Ketika memilih opsi Halaman Utama, aplikasi akan mengarahkan pengguna ke halaman utama.
 
-MaterialApp adalah widget yang menyediakan berbagai fitur untuk aplikasi Material Design, termasuk *navigator* untuk *routing* antar halaman, *theme* untuk *styling* konsisten, *localization support*, dan Material Design *visual effects*.
+- Ketika memilih opsi Tambah Produk, aplikasi akan mengarahkan pengguna ke halaman form tambah produk baru.
 
-Widget ini sering digunakan sebagai root karena:
-- Menyediakan konfigurasi dasar aplikasi (title, theme, home)
-- Mengatur navigasi dan routing secara otomatis
-- Memberikan akses ke Material Design components
-- Menyediakan context yang diperlukan widget-widget lain
+### Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya dan tambahkan subjudul untuk setiap tugas):
 
-#### Jelaskan perbedaan antara StatelessWidget dan StatefulWidget. Kapan kamu memilih salah satunya?
+#### Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement() pada Flutter. Dalam kasus apa sebaiknya masing-masing digunakan pada aplikasi Football Shop kamu?
 
-**StatelessWidget**:
-- Tidak memiliki state yang bisa berubah
-- Immutable (tidak berubah setelah dibuat)
-- Build hanya dipanggil sekali atau saat parent rebuild
-- Lebih ringan dan efisien
+**Navigator.push()** menambahkan halaman baru ke atas stack navigasi, sehingga pengguna dapat kembali ke halaman sebelumnya dengan tombol back. Contoh penggunaannya di aplikasi Football Shop adalah ketika pengguna menekan tombol "Create Product" di halaman utama untuk membuka form tambah produk - pengguna masih bisa kembali ke halaman utama.
 
-**StatefulWidget**:
-- Memiliki state yang bisa berubah
-- Mutable (bisa berubah dengan setState())
-- Dapat rebuild dirinya sendiri saat state berubah
-- Digunakan untuk widget interaktif
+**Navigator.pushReplacement()** mengganti halaman saat ini dengan halaman baru, sehingga halaman sebelumnya dihapus dari stack. Ini digunakan di drawer ketika berpindah antar menu utama (Home dan Create Product) agar tidak terjadi penumpukan halaman yang sama di stack navigasi.
 
-**Kapan memilih**:
-- Gunakan StatelessWidget untuk UI statis yang tidak berubah
-- Gunakan StatefulWidget untuk UI yang perlu update berdasarkan interaksi user atau data yang berubah
+#### Bagaimana kamu memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk membangun struktur halaman yang konsisten di seluruh aplikasi?
 
-#### Apa itu BuildContext dan mengapa penting di Flutter? Bagaimana penggunaannya di metode build?
+**Scaffold** digunakan sebagai struktur dasar setiap halaman, menyediakan kerangka material design dengan AppBar di atas, Drawer di samping, dan body di tengah.
 
-BuildContext adalah referensi ke lokasi widget dalam widget tree. BuildContext penting karena menyediakan akses ke widget *ancestor* (parent di atasnya), digunakan untuk mengakses Theme, MediaQuery, Navigator, diperlukan untuk menampilkan SnackBar, Dialog, dll., dan memungkinkan widget berkomunikasi dengan widget lain dalam *tree*.
+**AppBar** diterapkan di setiap halaman dengan warna primary theme yang sama dan foreground color putih, memberikan identitas visual yang konsisten.
 
-Penggunaan di metode build:
-- Diterima sebagai parameter di method build(BuildContext context)
-- Digunakan untuk mengakses inherited widgets: Theme.of(context), Navigator.of(context)
-- Digunakan untuk operasi yang memerlukan context seperti ScaffoldMessenger.of(context)
+**Drawer** (LeftDrawer) dibuat sebagai widget terpisah yang dapat digunakan di semua halaman, memastikan navigasi yang konsisten dengan opsi Home dan Create Product yang selalu tersedia.
 
-#### Jelaskan konsep "hot reload" di Flutter dan bagaimana bedanya dengan "hot restart".
+#### Dalam konteks desain antarmuka, apa kelebihan menggunakan layout widget seperti Padding, SingleChildScrollView, dan ListView saat menampilkan elemen-elemen form? Berikan contoh penggunaannya dari aplikasi kamu.
 
-**Hot Reload**:
-- Memuat ulang kode yang diubah **tanpa kehilangan state** aplikasi
-- Sangat cepat (biasanya < 1 detik)
-- Mempertahankan data dan posisi UI saat ini
-- Cocok untuk perubahan UI dan logic kecil
+**Padding** memberikan jarak antar elemen form agar tidak terlihat rapat dan lebih mudah dibaca. Contoh: setiap TextFormField dibungkus Padding dengan EdgeInsets.all(8.0).
 
-**Hot Restart**:
-- Restart aplikasi dari awal dan **menghapus semua state**
-- Lebih lambat dari hot reload
-- Menginisialisasi ulang semua variable dan state
-- Diperlukan untuk perubahan pada main(), initState(), atau perubahan besar
+**SingleChildScrollView** memungkinkan form dapat di-scroll ketika konten melebihi tinggi layar, terutama penting untuk form dengan banyak input field seperti form produk yang memiliki 9 input. Ini mencegah overflow error pada layar kecil.
 
-### Melakukan add-commit-push ke suatu repositori baru di GitHub.
+**ListView** cocok untuk menampilkan daftar item yang dinamis. Contoh: digunakan di Drawer untuk menampilkan menu navigasi (Home dan Create Product).
+
+#### Bagaimana kamu menyesuaikan warna tema agar aplikasi Football Shop memiliki identitas visual yang konsisten dengan brand toko?
+
+Di main.dart, saya menggunakan ColorScheme.fromSwatch dengan primarySwatch: Colors.blue sebagai warna utama yang merepresentasikan profesionalisme dan kepercayaan dalam dunia olahraga. Warna ini diterapkan secara konsisten di:
+- AppBar background di semua halaman
+- Tombol Save di form
+- DrawerHeader
+- Card items di homepage
+
+Dengan menggunakan Theme.of(context).colorScheme.primary, semua komponen otomatis mengikuti tema yang sama tanpa perlu hardcode warna di setiap widget.
+
+### Melakukan add, commit, dan push ke GitHub.
 Selesai.
