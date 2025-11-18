@@ -31,35 +31,21 @@ Hello Flutter
 
 #### Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement() pada Flutter. Dalam kasus apa sebaiknya masing-masing digunakan pada aplikasi Football Shop kamu?
 
-**Navigator.push()** menambahkan halaman baru ke atas stack navigasi, sehingga pengguna dapat kembali ke halaman sebelumnya dengan tombol back. Contoh penggunaannya di aplikasi Football Shop adalah ketika pengguna menekan tombol "Create Product" di halaman utama untuk membuka form tambah produk - pengguna masih bisa kembali ke halaman utama.
+**Navigator.push()** mendorong halaman baru ke atas stack sehingga halaman lama tetap tersimpan. Saya memakainya untuk navigasi "sekali jalan" seperti membuka `ProductFormPage` atau `ProductListPage` dari grid `ItemCard`. Pengguna bisa menekan tombol back untuk kembali ke beranda tanpa perlu memuat ulang state.
 
-**Navigator.pushReplacement()** mengganti halaman saat ini dengan halaman baru, sehingga halaman sebelumnya dihapus dari stack. Ini digunakan di drawer ketika berpindah antar menu utama (Home dan Create Product) agar tidak terjadi penumpukan halaman yang sama di stack navigasi.
+**Navigator.pushReplacement()** mengganti halaman aktif dengan halaman baru dan menghapus halaman lama dari stack. Pola ini saya pakai di `LeftDrawer` dan saat berpindah dari `LoginPage` ke `MyHomePage` agar tidak ada tumpukan halaman login yang membuat tombol back membawa user kembali ke layar autentikasi setelah berhasil masuk.
 
 #### Bagaimana kamu memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk membangun struktur halaman yang konsisten di seluruh aplikasi?
 
-**Scaffold** digunakan sebagai struktur dasar setiap halaman, menyediakan kerangka material design dengan AppBar di atas, Drawer di samping, dan body di tengah.
-
-**AppBar** diterapkan di setiap halaman dengan warna primary theme yang sama dan foreground color putih, memberikan identitas visual yang konsisten.
-
-**Drawer** (LeftDrawer) dibuat sebagai widget terpisah yang dapat digunakan di semua halaman, memastikan navigasi yang konsisten dengan opsi Home dan Create Product yang selalu tersedia.
+Setiap halaman utama (`LoginPage`, `ProductListPage`, `ProductFormPage`, hingga `ProductDetailPage`) dibangun di atas `Scaffold` sehingga memiliki area body, snackbar host, dan floating widgets yang sama. `AppBar` selalu memakai `Theme.of(context).colorScheme.primary` dengan teks putih sehingga identitas Footballpedia konsisten. `LeftDrawer` disusun sekali dan direuse pada halaman yang butuh navigasi utama (Home, Daftar Produk, Create Product, Logout) sehingga struktur navigasi lateral terasa sama di seluruh aplikasi.
 
 #### Dalam konteks desain antarmuka, apa kelebihan menggunakan layout widget seperti Padding, SingleChildScrollView, dan ListView saat menampilkan elemen-elemen form? Berikan contoh penggunaannya dari aplikasi kamu.
 
-**Padding** memberikan jarak antar elemen form agar tidak terlihat rapat dan lebih mudah dibaca. Contoh: setiap TextFormField dibungkus Padding dengan EdgeInsets.all(8.0).
-
-**SingleChildScrollView** memungkinkan form dapat di-scroll ketika konten melebihi tinggi layar, terutama penting untuk form dengan banyak input field seperti form produk yang memiliki 9 input. Ini mencegah overflow error pada layar kecil.
-
-**ListView** cocok untuk menampilkan daftar item yang dinamis. Contoh: digunakan di Drawer untuk menampilkan menu navigasi (Home dan Create Product).
+`Padding` memberikan ruang bernafas untuk tiap `TextFormField` di `ProductFormPage`, membuat 9 input berbeda tetap mudah dibaca. `SingleChildScrollView` membungkus form agar pengguna tetap bisa menggulir halaman ketika keyboard muncul atau layar kecil—tanpa scroll view, form akan overflow. `ListView` dipakai pada `ProductListPage` untuk menampilkan daftar produk dari backend secara efisien sekaligus mendukung pull-to-refresh dan lazy building item card.
 
 #### Bagaimana kamu menyesuaikan warna tema agar aplikasi Football Shop memiliki identitas visual yang konsisten dengan brand toko?
 
-Di main.dart, saya menggunakan ColorScheme.fromSwatch dengan primarySwatch: Colors.blue sebagai warna utama yang merepresentasikan profesionalisme dan kepercayaan dalam dunia olahraga. Warna ini diterapkan secara konsisten di:
-- AppBar background di semua halaman
-- Tombol Save di form
-- DrawerHeader
-- Card items di homepage
-
-Dengan menggunakan Theme.of(context).colorScheme.primary, semua komponen otomatis mengikuti tema yang sama tanpa perlu hardcode warna di setiap widget.
+Di `main.dart` saya membangkitkan tema dengan `ColorScheme.fromSeed(seedColor: Colors.blue)` lalu seluruh komponen mengambil warna primer melalui `Theme.of(context).colorScheme.primary`. AppBar, tombol aksi (Login, Save, Register), badge featured, dan header drawer otomatis memakai palet yang sama sehingga tidak perlu meng-hardcode warna satu per satu. Pendekatan ini menjaga konsistensi dan memudahkan penggantian warna brand di masa depan.
 
 ### Melakukan add, commit, dan push ke GitHub.
 Selesai.

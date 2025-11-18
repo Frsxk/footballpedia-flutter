@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:footballpedia_flutter/screens/menu.dart';
 import 'package:footballpedia_flutter/screens/product_form.dart';
+import 'package:footballpedia_flutter/screens/product_list.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
@@ -22,15 +23,21 @@ class ItemCard extends StatelessWidget {
           
           // Navigasi ke page yang sesuai
           if (item.name == 'All Products') {
-              // todo
-            } else if (item.name == 'My Products') {
-              // todo
-            } else if (item.name == 'Create Product') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProductFormPage()),
-              );
-            }
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProductListPage()),
+            );
+          } else if (item.name == 'My Products') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProductListPage()),
+            );
+          } else if (item.name == 'Create Product') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProductFormPage()),
+            );
+          }
         },
         child: Container(
           padding: const EdgeInsets.all(8),

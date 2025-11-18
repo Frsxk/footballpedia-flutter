@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:footballpedia_flutter/screens/login.dart';
 import 'package:footballpedia_flutter/screens/menu.dart';
 import 'package:footballpedia_flutter/screens/product_form.dart';
+import 'package:footballpedia_flutter/screens/product_list.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Drawer(
       child: ListView(
         children: [
@@ -50,6 +56,18 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.list_alt),
+            title: const Text('Daftar Produk'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProductListPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.add),
             title: const Text('Create Product'),
             // Bagian redirection ke ProductFormPage
@@ -57,8 +75,29 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProductFormPage()
-                ));
+                  builder: (context) => const ProductFormPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () async {
+              final response = await request.logout(
+                'https://muhammad-faza44-footballpedia.pbp.cs.ui.ac.id/auth/logout/',
+              );
+              if (context.mounted) {
+                final message = response['message'] ?? 'Berhasil logout.';
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(SnackBar(content: Text(message)));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  (route) => false,
+                );
+              }
             },
           ),
         ],
