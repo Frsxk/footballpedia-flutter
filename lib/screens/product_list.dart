@@ -8,7 +8,12 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
 class ProductListPage extends StatefulWidget {
-  const ProductListPage({super.key});
+  final ProductFilterOption initialFilter;
+
+  const ProductListPage({
+    super.key,
+    this.initialFilter = ProductFilterOption.all,
+  });
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
@@ -18,7 +23,13 @@ class _ProductListPageState extends State<ProductListPage> {
   static const String _baseApiUrl =
       'https://muhammad-faza44-footballpedia.pbp.cs.ui.ac.id';
   late Future<List<ProductEntry>> _futureProducts;
-  ProductFilterOption _filterOption = ProductFilterOption.all;
+  late ProductFilterOption _filterOption;
+
+  @override
+  void initState() {
+    super.initState();
+    _filterOption = widget.initialFilter;
+  }
 
   Future<List<ProductEntry>> _fetchProducts(CookieRequest request) async {
     final response = await request.get('$_baseApiUrl/json/');

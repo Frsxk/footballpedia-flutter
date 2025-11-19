@@ -105,6 +105,7 @@ class ProductDetailPage extends StatelessWidget {
                       label: const Text('Back to Product List'),
                     ),
                   ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),

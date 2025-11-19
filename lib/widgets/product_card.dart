@@ -20,7 +20,7 @@ class ItemCard extends StatelessWidget {
             ..showSnackBar(
               SnackBar(content: Text("Kamu telah menekan tombol ${item.name}")),
             );
-          
+
           // Navigasi ke page yang sesuai
           if (item.name == 'All Products') {
             Navigator.push(
@@ -30,7 +30,11 @@ class ItemCard extends StatelessWidget {
           } else if (item.name == 'My Products') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const ProductListPage()),
+              MaterialPageRoute(
+                builder: (_) => const ProductListPage(
+                  initialFilter: ProductFilterOption.mine,
+                ),
+              ),
             );
           } else if (item.name == 'Create Product') {
             Navigator.push(
@@ -47,7 +51,11 @@ class ItemCard extends StatelessWidget {
               children: [
                 Icon(item.icon, color: Colors.white, size: 30.0),
                 const Padding(padding: EdgeInsets.all(3)),
-                Text(item.name, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
+                Text(
+                  item.name,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ],
             ),
           ),
