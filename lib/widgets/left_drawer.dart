@@ -12,14 +12,13 @@ class LeftDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final theme = Theme.of(context);
 
     return Drawer(
       child: ListView(
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
+          DrawerHeader(
+            decoration: BoxDecoration(color: theme.colorScheme.primary),
             child: Column(
               children: [
                 Text(
@@ -32,12 +31,11 @@ class LeftDrawer extends StatelessWidget {
                   ),
                 ),
                 Padding(padding: EdgeInsets.all(10)),
-                Text("Your Ultimate Football Equipment Store",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white)
-                    ),
+                Text(
+                  "Your Ultimate Football Equipment Store",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                ),
               ],
             ),
           ),
@@ -49,15 +47,14 @@ class LeftDrawer extends StatelessWidget {
             // Bagian redirection ke MyHomePage
             onTap: () {
               Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MyHomePage(),
-                  ));
+                context,
+                MaterialPageRoute(builder: (context) => MyHomePage()),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.list_alt),
-            title: const Text('Daftar Produk'),
+            title: const Text('Product List'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
@@ -88,7 +85,9 @@ class LeftDrawer extends StatelessWidget {
                 'https://muhammad-faza44-footballpedia.pbp.cs.ui.ac.id/auth/logout/',
               );
               if (context.mounted) {
-                final message = response['message'] ?? 'Berhasil logout.';
+                final message =
+                    response['message'] ?? 'Logged out successfully.';
+                request.jsonData.clear();
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(SnackBar(content: Text(message)));

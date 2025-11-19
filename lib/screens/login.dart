@@ -33,39 +33,39 @@ class _LoginPageState extends State<LoginPage> {
 
     if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Username dan password tidak boleh kosong.')),
+        const SnackBar(content: Text('Username and password cannot be empty.')),
       );
       return;
     }
 
     setState(() => _isSubmitting = true);
 
-    final response = await request.login(
-      '$_authBaseUrl/login/',
-      {
-        'username': username,
-        'password': password,
-      },
-    );
+    final response = await request.login('$_authBaseUrl/login/', {
+      'username': username,
+      'password': password,
+    });
 
     if (!mounted) return;
 
     setState(() => _isSubmitting = false);
 
     if (request.loggedIn) {
-      final String message = response['message'] ?? 'Login berhasil!';
+      final String message = response['message'] ?? 'Login Success!';
       final String uname = response['username'] ?? username;
+      request.jsonData['username'] = uname;
+      if (response['user_id'] != null) {
+        request.jsonData['user_id'] = response['user_id'];
+      }
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text('$message Selamat datang, $uname!')),
-        );
+        ..showSnackBar(SnackBar(content: Text('$message Welcome, $uname!')));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => MyHomePage()),
       );
     } else {
-      final String message = response['message'] ?? 'Login gagal, coba lagi.';
+      final String message =
+          response['message'] ?? 'Login failed, please try again.';
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -98,14 +98,16 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.all(20.0),
           child: Card(
             elevation: 8,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'Masuk ke Footballpedia',
+                    'Sign in to Footballpedia',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 24),
@@ -138,11 +140,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: _isSubmitting
                           ? const SizedBox(
-                              height: 20,
+                              height: 24,
                               width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
-                          : const Text('Login'),
+                          : const Text('Login', style: TextStyle(fontSize: 16)),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -152,11 +157,13 @@ class _LoginPageState extends State<LoginPage> {
                         : () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const RegisterPage()),
+                              MaterialPageRoute(
+                                builder: (_) => const RegisterPage(),
+                              ),
                             );
                           },
                     child: Text(
-                      'Belum punya akun? Daftar',
+                      "Don't have an account? Register",
                       style: TextStyle(color: theme.colorScheme.primary),
                     ),
                   ),

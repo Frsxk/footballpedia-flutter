@@ -1,51 +1,59 @@
-# Tugas 8 PBP: Flutter Navigation, Layouts, Forms, and Input Elements
+# Tugas 9: Integrasi Layanan Web Django dengan Aplikasi Flutter
 
 Hello Flutter
 
 # Checklist Tugas
-### Membuat minimal satu halaman baru pada aplikasi, yaitu halaman formulir tambah produk baru dengan ketentuan sebagai berikut:
+### Memastikan deployment proyek tugas Django kamu telah berjalan dengan baik.
 
-#### Memakai minimal tiga elemen input, yaitu name, price, dan description.
+### Mengimplementasikan fitur registrasi akun pada proyek tugas Flutter.
 
-#### Tambahkan elemen input lain sesuai dengan model pada aplikasi Football Shop Django yang telah kamu buat (misalnya thumbnail, category, dan isFeatured).
+### Membuat halaman login pada proyek tugas Flutter.
 
-#### Memiliki sebuah tombol Save.
+### Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
 
-#### Setiap elemen input di formulir juga harus divalidasi dengan ketentuan sebagai berikut:
-- Setiap elemen input tidak boleh kosong.
-- Setiap elemen input harus berisi data dengan tipe data atribut modelnya.
+### Membuat model kustom sesuai dengan proyek aplikasi Django.
 
-### Mengarahkan pengguna ke halaman form tambah produk baru ketika menekan tombol Tambah Produk pada halaman utama.
+### Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
 
-### Memunculkan data sesuai isi dari formulir yang diisi dalam sebuah pop-up setelah menekan tombol Save pada halaman form tambah produk baru.
+#### Tampilkan name, price, description, thumbnail, category, dan is_featured dari masing-masing item pada halaman ini (Dapat disesuaikan dengan field yang kalian buat sebelumnya).
 
-### Membuat sebuah drawer pada aplikasi dengan ketentuan sebagai berikut:
+### Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item.
+#### Halaman ini dapat diakses dengan menekan salah satu card item pada halaman daftar Item.
 
-- Drawer minimal memiliki dua buah opsi, yaitu Halaman Utama dan Tambah Produk.
+#### Tampilkan seluruh atribut pada model item kamu pada halaman ini.
 
-- Ketika memilih opsi Halaman Utama, aplikasi akan mengarahkan pengguna ke halaman utama.
+#### Tambahkan tombol untuk kembali ke halaman daftar item.
 
-- Ketika memilih opsi Tambah Produk, aplikasi akan mengarahkan pengguna ke halaman form tambah produk baru.
+### Melakukan filter pada halaman daftar item dengan hanya menampilkan item yang terasosiasi dengan pengguna yang login.
 
-### Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya dan tambahkan subjudul untuk setiap tugas):
+### Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
 
-#### Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement() pada Flutter. Dalam kasus apa sebaiknya masing-masing digunakan pada aplikasi Football Shop kamu?
+#### Jelaskan mengapa kita perlu membuat model Dart saat mengambil/mengirim data JSON? Apa konsekuensinya jika langsung memetakan `Map<String, dynamic>` tanpa model (terkait validasi tipe, null-safety, maintainability)?
+Model Dart menjaga kontrak data tetap eksplisit. Dengan class `ProductEntry` (`lib/models/product_entry.dart`) saya bisa memaksa setiap atribut seperti `price`, `isFeatured`, hingga `ownerUsername` memiliki tipe yang tepat serta konversi khusus (mis. `rating` -> `double`). Jika hanya memakai `Map<String, dynamic>`, kesalahan seperti salah ketik key, nilai null tak terduga, atau perubahan struktur JSON baru akan meledak saat runtime dan sulit dilacak. Model juga memusatkan logika konversi (mis. ekstraksi nama pemilik dari berbagai bentuk field), sehingga ketika backend berubah saya cukup menyentuh satu file.
 
-**Navigator.push()** mendorong halaman baru ke atas stack sehingga halaman lama tetap tersimpan. Saya memakainya untuk navigasi "sekali jalan" seperti membuka `ProductFormPage` atau `ProductListPage` dari grid `ItemCard`. Pengguna bisa menekan tombol back untuk kembali ke beranda tanpa perlu memuat ulang state.
+#### Apa fungsi package http dan CookieRequest dalam tugas ini? Jelaskan perbedaan peran http vs CookieRequest.
+Package `http` menyediakan klien REST dasar (GET/POST tanpa sesi) dan tetap saya butuhkan untuk kasus non-autentikasi. `CookieRequest` dari `pbp_django_auth` membungkus HTTP client sekaligus menyimpan cookie session Django. Saat login di `lib/screens/login.dart`, `request.login()` otomatis menyimpan cookie CSRF/session dan kemudian dipakai di seluruh aplikasi (fetch daftar produk, buat produk, logout) tanpa harus mengelola header manual. Singkatnya: `http` = transport umum; `CookieRequest` = transport + stateful auth khusus Django yang memahami cookie & CSRF.
 
-**Navigator.pushReplacement()** mengganti halaman aktif dengan halaman baru dan menghapus halaman lama dari stack. Pola ini saya pakai di `LeftDrawer` dan saat berpindah dari `LoginPage` ke `MyHomePage` agar tidak ada tumpukan halaman login yang membuat tombol back membawa user kembali ke layar autentikasi setelah berhasil masuk.
+#### Jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+Instance `CookieRequest` menyimpan cookie autentikasi serta data tambahan seperti username aktif (`request.jsonData`). Karena seluruh halaman (drawer, daftar produk, form) perlu mengakses cookie yang sama, saya membungkus `MaterialApp` dengan `Provider<CookieRequest>` di `main.dart`. Dengan begitu setiap widget cukup memanggil `context.watch<CookieRequest>()` tanpa harus meneruskan objek lewat constructor. Jika tidak dibagikan, setiap halaman bisa saja memiliki sesi berbeda sehingga request ke backend gagal akibat tidak membawa cookie login.
 
-#### Bagaimana kamu memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk membangun struktur halaman yang konsisten di seluruh aplikasi?
+#### Jelaskan konfigurasi konektivitas yang diperlukan agar Flutter dapat berkomunikasi dengan Django. Mengapa kita perlu menambahkan 10.0.2.2 pada ALLOWED_HOSTS, mengaktifkan CORS dan pengaturan SameSite/cookie, dan menambahkan izin akses internet di Android? Apa yang akan terjadi jika konfigurasi tersebut tidak dilakukan dengan benar?
+Browser/Android emulator mengakses `localhost` Django melalui alamat `10.0.2.2`, sehingga alamat tersebut harus ada pada `ALLOWED_HOSTS` Django supaya request tidak ditolak. Karena Flutter berjalan di domain berbeda, Django perlu mengizinkan CORS dan mengatur cookie (`SameSite=None`, `Secure=True`) agar cookie session boleh dikirim lintas origin. Di sisi Flutter, saya menambahkan `<uses-permission android:name="android.permission.INTERNET" />` pada `AndroidManifest.xml`, jika tidak, semua request jaringan akan gagal dengan error `SocketException`. Tanpa konfigurasi ini integrasi gagal: request diblokir oleh Django atau tidak pernah keluar dari aplikasi.
 
-Setiap halaman utama (`LoginPage`, `ProductListPage`, `ProductFormPage`, hingga `ProductDetailPage`) dibangun di atas `Scaffold` sehingga memiliki area body, snackbar host, dan floating widgets yang sama. `AppBar` selalu memakai `Theme.of(context).colorScheme.primary` dengan teks putih sehingga identitas Footballpedia konsisten. `LeftDrawer` disusun sekali dan direuse pada halaman yang butuh navigasi utama (Home, Daftar Produk, Create Product, Logout) sehingga struktur navigasi lateral terasa sama di seluruh aplikasi.
+#### Jelaskan mekanisme pengiriman data mulai dari input hingga dapat ditampilkan pada Flutter.
+Alur tambah produk (`lib/screens/product_form.dart`) dimulai dari input user di `TextFormField`. Setelah validasi lolos, data dikumpulkan dalam map, diubah menjadi JSON dengan `jsonEncode`, lalu dikirim melalui `CookieRequest.postJson()` ke endpoint `create-product-flutter/`. Django menyimpan data dan mengembalikan status. Jika sukses, Flutter menampilkan dialog berisi data yang baru saja dikirim sekaligus mereset form. Ketika halaman daftar (`ProductListPage`) dimuat, Flutter memanggil endpoint JSON yang sama, mengonversinya ke `ProductEntry`, lalu menampilkan atribut seperti `name`, `price`, `description`, `thumbnail`, `category`, dan `isFeatured` melalui `ProductEntryCard`.
 
-#### Dalam konteks desain antarmuka, apa kelebihan menggunakan layout widget seperti Padding, SingleChildScrollView, dan ListView saat menampilkan elemen-elemen form? Berikan contoh penggunaannya dari aplikasi kamu.
+#### Jelaskan mekanisme autentikasi dari login, register, hingga logout. Mulai dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+Pada login, pengguna mengisi username/password di `LoginPage`. `CookieRequest.login()` mengirim kredensial ke `.../auth/login/`; Django memverifikasi, mengirim cookie session + JSON balasan (status, username, optional user_id). Saya menyimpan username pada `request.jsonData` agar bisa dipakai untuk filter produk. Setelah itu Navigator mengganti layar menuju `MyHomePage`. Register berjalan mirip, hanya saja `RegisterPage` memanggil `postJson()` ke `.../auth/register/` dan jika sukses diarahkan kembali ke login. Logout dipicu dari drawer: `request.logout()` memanggil endpoint logout Django, backend menghapus sesi, Flutter membersihkan `request.jsonData`, menunjukkan snackbar, lalu mengembalikan user ke `LoginPage`.
 
-`Padding` memberikan ruang bernafas untuk tiap `TextFormField` di `ProductFormPage`, membuat 9 input berbeda tetap mudah dibaca. `SingleChildScrollView` membungkus form agar pengguna tetap bisa menggulir halaman ketika keyboard muncul atau layar kecil—tanpa scroll view, form akan overflow. `ListView` dipakai pada `ProductListPage` untuk menampilkan daftar produk dari backend secara efisien sekaligus mendukung pull-to-refresh dan lazy building item card.
-
-#### Bagaimana kamu menyesuaikan warna tema agar aplikasi Football Shop memiliki identitas visual yang konsisten dengan brand toko?
-
-Di `main.dart` saya membangkitkan tema dengan `ColorScheme.fromSeed(seedColor: Colors.blue)` lalu seluruh komponen mengambil warna primer melalui `Theme.of(context).colorScheme.primary`. AppBar, tombol aksi (Login, Save, Register), badge featured, dan header drawer otomatis memakai palet yang sama sehingga tidak perlu meng-hardcode warna satu per satu. Pendekatan ini menjaga konsistensi dan memudahkan penggantian warna brand di masa depan.
+#### Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+1. **Deployment Django**: memastikan endpoint `json/`, `auth/*`, `create-product-flutter/`, dan `proxy-image/` bisa diakses via domain `muhammad-faza44-footballpedia...` sebelum menyentuh Flutter.
+2. **Autentikasi Flutter**: menambahkan dependency (`provider`, `pbp_django_auth`), membungkus `MaterialApp` dengan `Provider<CookieRequest>`, lalu membuat `LoginPage` dan `RegisterPage` yang benar-benar memanggil endpoint milik saya (bukan placeholder). Username yang berhasil login disimpan ke `request.jsonData`.
+3. **Drawer & Navigasi**: `LeftDrawer` diupdate agar mengarahkan user ke Home, daftar produk, form produk, dan menyediakan tombol logout yang juga menutup sesi.
+4. **Model Kustom**: menyesuaikan `ProductEntry` agar mencerminkan seluruh field backend termasuk `ownerUsername`. Ini memudahkan saya menampilkan atribut lengkap di UI.
+5. **Halaman Daftar & Detail**: `ProductListPage` memakai `CookieRequest.get()` untuk mengambil data, mem-filter item agar hanya menampilkan produk milik akun login, dan menampilkan atribut wajib lewat `ProductEntryCard`. Saat card ditekan, `ProductDetailPage` menampilkan seluruh atribut berikut tombol kembali.
+6. **Form Tambah Produk**: `ProductFormPage` sekarang mengirim data ke endpoint `create-product-flutter/` menggunakan `CookieRequest`, kemudian menampilkan summary dialog jika sukses.
+7. **Dokumentasi & analisis**: menjalankan `flutter analyze` untuk memastikan tidak ada lint error, lalu merangkum jawaban dan bukti implementasi di README ini.
 
 ### Melakukan add, commit, dan push ke GitHub.
 Selesai.

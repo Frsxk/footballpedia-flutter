@@ -50,11 +50,11 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _isSubmitting = false);
 
     final status = response['status'];
-    final message = response['message'] ?? 'Registrasi selesai.';
+    final message = response['message'] ?? 'User registered successfully!';
 
     if (status == 'success' || status == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registrasi berhasil! $message')),
+        SnackBar(content: Text('$message Sign in to your account now.')),
       );
       Navigator.pushReplacement(
         context,
@@ -73,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daftar Akun Footballpedia'),
+        title: const Text('Register to Footballpedia'),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
       ),
@@ -91,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text(
-                      'Buat akun baru',
+                      'Join Footballpedia Now!',
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 24),
@@ -158,11 +158,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         child: _isSubmitting
                             ? const SizedBox(
-                                height: 20,
+                                height: 24,
                                 width: 20,
                                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                               )
-                            : const Text('Daftar'),
+                            : const Text('Register', style: TextStyle(fontSize: 16)),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -174,7 +174,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 MaterialPageRoute(builder: (_) => const LoginPage()),
                               ),
                       child: Text(
-                        'Sudah punya akun? Masuk',
+                        'Already have an account? Sign in',
                         style: TextStyle(color: theme.colorScheme.primary),
                       ),
                     ),

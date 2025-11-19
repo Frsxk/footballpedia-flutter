@@ -14,11 +14,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (_) => CookieRequest(),
+      create: (_) {
+        CookieRequest request = CookieRequest();
+        return request;
+      },
       child: MaterialApp(
         title: 'Footballpedia',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green).copyWith(secondary: Colors.blue),
         ),
         home: const LoginPage(),
       ),
